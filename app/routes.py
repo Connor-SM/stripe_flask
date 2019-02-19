@@ -113,7 +113,7 @@ def register():
             username = form.username.data,
             email = form.email.data,
             url = form.url.data,
-            age = int(form.age.data),
+            age = form.age.data,
             bio = form.bio.data
         )
 
