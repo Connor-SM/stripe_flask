@@ -1,5 +1,5 @@
 from app import app, db
-from flask import render_template, url_for, redirect, flash
+from flask import render_template, url_for, redirect, flash, request, jsonify
 from app.forms import TitleForm, PostForm, LoginForm, RegisterForm
 from app.models import Post, User
 from flask_login import current_user, login_user, logout_user, login_required
@@ -127,6 +127,66 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html', title='Register', form=form)
+
+
+
+@app.route('/api/posts/', methods=['GET'])
+def api():
+    ####################################
+    # for retrieving posts by a user
+    ####################################
+    try:
+        username = request.args.get('username')
+        user = User.query.filter_by(username=username).first()
+
+        posts = Post.query.filter_by(user_id=user.id).all()
+
+        data = {
+            username: []
+        }
+
+        tweets = []
+
+        for post in posts:
+            tweets.append({
+                'date_posted': str(post.date_posted.date()),
+                'tweet' : post.tweet
+            })
+
+        data[username] = tweets
+
+        return jsonify(data)
+
+    except:
+        return jsonify({
+            'error #001': 'Incorrect Username'
+        })
+
+
+@app.route('/api/tweet/', methods=['GET', 'POST'])
+def api_tweet():
+    try:
+        tweet = request.args.get('post')
+        username = request.args.get('username')
+        p = request.args.get('p')
+
+        user = User.query.filter_by(username=username).first()
+
+        if not user or not user.check_password(p):
+            return jsonify({ 'error #002': 'incorrect credentials'})
+
+        # user credentials right, post to database and save
+        post = Post(tweet=tweet, user_id=user.id)
+        db.session.add(post)
+        db.session.commit()
+
+        return jsonify({ 'success': 'posted correctly for {}'.format(username)})
+
+    except:
+        return jsonify({ 'error #003': 'incorrect parameters'})
+
+
+
 
 
 
