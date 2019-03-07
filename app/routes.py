@@ -3,36 +3,73 @@ from flask import render_template, url_for, redirect, flash, request, jsonify
 from app.forms import TitleForm, PostForm, LoginForm, RegisterForm
 from app.models import Post, User
 from flask_login import current_user, login_user, logout_user, login_required
+import stripe
+
+stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
 
 @app.route('/')
 @app.route('/index')
 @app.route('/index/<header>', methods=['GET'])
 def index(header=''):
-    products = {
-        1001: {
+    products = [
+        {
+            'id': 1001,
             'title': 'Soap',
             'price': 3.98,
             'desc': 'Very clean soapy soap, descriptive text'
         },
-        1002: {
+        {
+            'id': 1002,
             'title': 'Grapes',
             'price': 4.56,
             'desc': 'A bundle of grapey grapes, yummy'
         },
-        1003: {
+        {
+            'id': 1003,
             'title': 'Pickles',
             'price': 5.67,
             'desc': 'A jar of pickles is pickly'
         },
-        1004: {
+        {
+            'id': 1004,
             'title': 'Juice',
             'price': 2.68,
             'desc': 'Yummy orange juice'
         }
-    }
+    ]
 
     return render_template('index.html', header=header, products=products, title='Home')
+
+
+@app.route('/checkout', methods=['GET', 'POST'])
+def checkout():
+    return render_template('checkout.html')
+
+
+@app.route('/pay/', methods=['POST'])
+def pay():
+    # print(request.form)
+
+    amount = request.args.get('amount')
+    email = request.form['stripeEmail']
+
+    customer = stripe.Customer.create(email=email, source=request.form['stripeToken'])
+
+    charge = stripe.Charge.create(
+        customer=customer.id,
+        amount=amount,
+        currency='usd',
+        description='Products'
+    )
+
+    return redirect(url_for('thanks', amount=amount, email=email))
+
+
+@app.route('/thanks/<email>/<amount>', methods=['GET', 'POST'])
+def thanks(email, amount):
+    amount = int(amount) / 100
+    return render_template('thanks.html', email=email, amount=amount)
 
 
 @login_required

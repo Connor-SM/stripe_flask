@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+  {{ super() }} - Thanks
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+{% endblock%}
+
+
+{% block app_content %}
+  <div class="container extra-margin-lg">
+    <div class="row">
+      <div class="col-md-4 offset-md-4">
+        <h1>Thanks for your purchase!</h1>
+        <p>We've sent an email to {{ email }} for your purchase of ${{ amount }}.</p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

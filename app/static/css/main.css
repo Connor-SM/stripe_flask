@@ -2,6 +2,10 @@ body {
   overflow-x: hidden;
 }
 
+.extra-margin-lg {
+  margin-top: 100px;
+}
+
 .messages {
   position: fixed;
   top: 70px;
