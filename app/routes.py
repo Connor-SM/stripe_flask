@@ -44,6 +44,19 @@ def checkout():
     return render_template('checkout.html', title='Checkout')
 
 
+@app.route('/pay', methods=['GET', 'POST'])
+def pay():
+    print(request.form);
+    email = request.form['stripeEmail']
+
+    return redirect(url_for('thanks', amount=0, email=email))
+
+
+@app.route('/thanks/<amount>/<email>', methods=['GET'])
+def thanks(amount, email):
+    return render_template('thanks.html', amount=amount, email=email, title='Thanks')
+
+
 @login_required
 @app.route('/posts/<username>', methods=['GET', 'POST'])
 def posts(username):

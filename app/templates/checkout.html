@@ -31,9 +31,27 @@
             <!-- create a row for each product in cart -->
           </tbody>
           <tfoot>
-            <th colSpan="2">Total:</th>
-            <!-- TODO: update total price -->
-            <th colSpan="2" class="total">$0.00</th>
+            <tr>
+              <th colSpan="2">Total:</th>
+              <!-- TODO: update total price -->
+              <th colSpan="2" class="total">$0.00</th>
+            </tr>
+            <tr>
+              <th colSpan="2"></th>
+              <th>
+                <form action="{{ url_for('pay') }}" method="POST">
+                  <script
+                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                    data-key="pk_test_MSZTVdqcc4IWKrUhmAn8GLJa"
+                    data-amount="999"
+                    data-name="Connormilliken"
+                    data-description="Widget"
+                    data-image="https://stripe.com/img/documentation/checkout/marketplace.png"
+                    data-locale="auto">
+                  </script>
+                </form>
+              </th>
+            </tr>
           </tfoot>
         </table>
       </div>
