@@ -44,7 +44,7 @@ def index(header=''):
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
-    return render_template('checkout.html')
+    return render_template('checkout.html', title='Checkout')
 
 
 @app.route('/pay/', methods=['POST'])
