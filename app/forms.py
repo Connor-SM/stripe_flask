@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField, PasswordField, IntegerField
+from wtforms import StringField, SubmitField, BooleanField, PasswordField, IntegerField, TextAreaField
 from flask import flash
 from app.models import User
 from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
@@ -48,3 +48,10 @@ class RegisterForm(FlaskForm):
         if user is not None:
             flash('Sorry but those credentials are already in use')
             raise ValidationError('E-mail already taken.')
+
+
+class ContactForm(FlaskForm):
+    name = StringField('Name:', validators=[DataRequired()])
+    email = StringField('E-mail:', validators=[DataRequired(), Email()])
+    message = TextAreaField('Message:', validators=[DataRequired()])
+    submit = SubmitField('Submit')

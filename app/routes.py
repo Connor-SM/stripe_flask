@@ -1,9 +1,10 @@
 from app import app, db
 from flask import render_template, url_for, redirect, flash, request, jsonify
-from app.forms import TitleForm, PostForm, LoginForm, RegisterForm
+from app.forms import TitleForm, PostForm, LoginForm, RegisterForm, ContactForm
 from app.models import Post, User
 from flask_login import current_user, login_user, logout_user, login_required
-import stripe;
+import stripe
+from app.email import send_email
 
 stripe.api_key = app.config['STRIPE_SECRET_KEY']
 
@@ -228,7 +229,28 @@ def api_tweet():
         return jsonify({ 'error #003': 'incorrect parameters'})
 
 
+@app.route('/contact', methods=['GET', 'POST'])
+def contact():
+    form = ContactForm()
 
+    if form.validate_on_submit():
+        send_email(
+            subject = 'Contact Form',
+            sender = 'cmilliken09@gmail.com',
+            recipients = [form.email.data],
+            text_body = render_template('email/contact_form.txt',
+                name = form.name.data,
+                message = form.message.data
+            ),
+            html_body = render_template('email/contact_form.html',
+                name = form.name.data,
+                message = form.message.data
+            )
+        )
+        flash('Your email has been sent.')
+        return redirect(url_for('index'))
+
+    return render_template('contact.html', form=form, title='Contact')
 
 
 

@@ -5,6 +5,7 @@ from config import Config
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_mail import Mail
 
 
 # create instance of app variable
@@ -23,6 +24,9 @@ login = LoginManager(app)
 
 # when a page requires somebody to login, the application will instead route them to the correct route described below
 login.login_view = 'login'
+
+# declare our Mail class
+mail = Mail(app)
 
 # once app variable is creating import the routes to load home page
 from app import routes
